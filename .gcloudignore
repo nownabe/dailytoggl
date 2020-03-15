@@ -1,0 +1,6 @@
+.envrc
+.gcloudignore
+.git
+.gitignore
+README.md
+deploy.sh
