@@ -6,14 +6,23 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/kelseyhightower/envconfig"
 )
 
-var conf *config
+var (
+	conf  *config
+	toggl TogglClient
+	loc   *time.Location
+)
 
 type config struct {
-	AuthToken string `split_words:"true" required:"true"`
+	AuthToken        string `split_words:"true" required:"true"`
+	TimeZone         string `split_words:"true" required:"true"`
+	TogglAPIToken    string `split_words:"true" required:"true"`
+	TogglProjectID   string `split_words:"true" required:"true"`
+	TogglWorkspaceID string `split_words:"true" required:"true"`
 }
 
 type requestBody struct {
@@ -24,6 +33,13 @@ type requestBody struct {
 func init() {
 	conf = &config{}
 	if err := envconfig.Process("", conf); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	toggl = newToggl(conf)
+
+	var err error
+	if loc, err = time.LoadLocation(conf.TimeZone); err != nil {
 		log.Fatal(err.Error())
 	}
 }
@@ -55,5 +71,31 @@ func DailyToggl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "ok")
+	date, err := getTargetDate(body.Date)
+	if err != nil {
+		log.Printf("getTargetDate: %v", err)
+		http.Error(w, "invalid date", http.StatusBadRequest)
+		return
+	}
+
+	total, err := toggl.getDayTotal(date)
+	if err != nil {
+		log.Printf("toggl.getDayTotal: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, fmt.Sprintf("%d", total))
+}
+
+// getTargetDate returns target date as time.Time.
+// If date is given, getTargetDate uses it.
+// If not, getTargetDate returns yesterday.
+func getTargetDate(str string) (time.Time, error) {
+	if str != "" {
+		return time.Parse("2006-01-02", str)
+	}
+
+	yesterday := time.Now().Add(-24 * time.Hour)
+	return yesterday.In(loc), nil
 }
