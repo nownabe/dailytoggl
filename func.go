@@ -30,6 +30,12 @@ func init() {
 
 // DailyToggl aggregate toggl times.
 func DailyToggl(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		log.Printf("request method is: %s", r.Method)
+		http.Error(w, "unsupported http method", http.StatusBadRequest)
+		return
+	}
+
 	rawBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("ioutil.ReadAll: %v", err)
