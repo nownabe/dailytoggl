@@ -19,7 +19,7 @@ var (
 
 type config struct {
 	AuthToken        string `split_words:"true" required:"true"`
-	TimeZone         string `split_words:"true" required:"true"`
+	TogglTimeZone    string `split_words:"true" required:"true"`
 	TogglAPIToken    string `split_words:"true" required:"true"`
 	TogglProjectID   string `split_words:"true" required:"true"`
 	TogglWorkspaceID string `split_words:"true" required:"true"`
@@ -39,7 +39,7 @@ func init() {
 	toggl = newToggl(conf)
 
 	var err error
-	if loc, err = time.LoadLocation(conf.TimeZone); err != nil {
+	if loc, err = time.LoadLocation(conf.TogglTimeZone); err != nil {
 		log.Fatal(err.Error())
 	}
 }
