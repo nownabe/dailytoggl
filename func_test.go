@@ -12,6 +12,7 @@ import (
 func TestMain(m *testing.M) {
 	yesterday = time.Now().Add(-24 * time.Hour).In(loc)
 	toggl = &togglClientMock{}
+	pixela = &pixelaClientMock{}
 
 	code := m.Run()
 	os.Exit(code)

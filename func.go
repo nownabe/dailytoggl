@@ -12,13 +12,17 @@ import (
 )
 
 var (
-	conf  *config
-	toggl TogglClient
-	loc   *time.Location
+	conf   *config
+	toggl  TogglClient
+	pixela PixelaClient
+	loc    *time.Location
 )
 
 type config struct {
 	AuthToken        string `split_words:"true" required:"true"`
+	PixelaToken      string `split_words:"true" required:"true"`
+	PixelaUsername   string `split_words:"true" required:"true"`
+	PixelaGraphID    string `split_words:"true" required:"true"`
 	TogglTimeZone    string `split_words:"true" required:"true"`
 	TogglAPIToken    string `split_words:"true" required:"true"`
 	TogglProjectID   string `split_words:"true" required:"true"`
@@ -37,6 +41,7 @@ func init() {
 	}
 
 	toggl = newToggl(conf)
+	pixela = newPixelaClient(conf)
 
 	var err error
 	if loc, err = time.LoadLocation(conf.TogglTimeZone); err != nil {
@@ -81,6 +86,12 @@ func DailyToggl(w http.ResponseWriter, r *http.Request) {
 	total, err := toggl.getDayTotal(date)
 	if err != nil {
 		log.Printf("toggl.getDayTotal: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := pixela.update(date, total); err != nil {
+		log.Printf("pixela.update: %v", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
