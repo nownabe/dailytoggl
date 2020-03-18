@@ -168,7 +168,7 @@ func tweet(total int64, date time.Time) error {
 		return err
 	}
 
-	msg := fmt.Sprintf(`On %s, I studied English for %d minutes.\n%s.html`,
+	msg := fmt.Sprintf("On %s, I studied English for %d minutes.\n%s.html",
 		date.Format("2006-01-02"), total, pixela.graphURL())
 
 	if err := twitter.post(msg, png); err != nil {
