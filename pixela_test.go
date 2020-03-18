@@ -4,6 +4,10 @@ import "time"
 
 type pixelaClientMock struct{}
 
+func (c *pixelaClientMock) getGraph() ([]byte, error) {
+	return nil, nil
+}
+
 func (c *pixelaClientMock) graphURL() string {
 	return ""
 }

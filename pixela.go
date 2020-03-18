@@ -12,6 +12,7 @@ const pixelaBaseURL = "https://pixe.la/v1/users"
 
 // PixelaClient defines pixela client's behaviors.
 type PixelaClient interface {
+	getGraph() ([]byte, error)
 	graphURL() string
 	update(time.Time, int64) error
 }
@@ -34,6 +35,32 @@ func newPixelaClient(conf *config) PixelaClient {
 		username: conf.PixelaUsername,
 		graphID:  conf.PixelaGraphID,
 	}
+}
+
+func (c *pixelaClient) getGraph() ([]byte, error) {
+	fmt.Println(c.graphURL())
+	req, err := http.NewRequest("GET", c.graphURL(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= 400 {
+		return nil, fmt.Errorf("pixela error: status = %d, message = %s",
+			resp.StatusCode, string(respBody))
+	}
+
+	return respBody, nil
 }
 
 func (c *pixelaClient) graphURL() string {
