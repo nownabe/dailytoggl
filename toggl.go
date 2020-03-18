@@ -40,7 +40,7 @@ func newToggl(conf *config) TogglClient {
 	}
 }
 
-// getDayTotal returns milliseconds
+// getDayTotal returns minutes
 func (c *togglClient) getDayTotal(date time.Time) (int64, error) {
 	v := url.Values{}
 	v.Set("user_agent", "dailytoggl")
@@ -70,5 +70,5 @@ func (c *togglClient) getDayTotal(date time.Time) (int64, error) {
 		return 0, err
 	}
 
-	return body.TotalGrand, nil
+	return body.TotalGrand / 1000 / 60, nil
 }
