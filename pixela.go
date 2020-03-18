@@ -68,7 +68,7 @@ func (c *pixelaClient) graphURL() string {
 }
 
 func (c *pixelaClient) update(date time.Time, val int64) error {
-	reqBody := fmt.Sprintf(`{"quantity":"%d"}`, val/1000)
+	reqBody := fmt.Sprintf(`{"quantity":"%d"}`, val)
 	req, err := http.NewRequest("PUT",
 		c.graphURL()+"/"+date.Format("20060102"),
 		strings.NewReader(reqBody))
