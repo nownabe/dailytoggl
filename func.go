@@ -32,6 +32,7 @@ type config struct {
 	TogglWorkspaceID         string `split_words:"true" required:"true"`
 	TwitterAccessToken       string `split_words:"true"`
 	TwitterAccessTokenSecret string `split_words:"true"`
+	TwitterEnabled           string `split_words:"true"`
 	TwitterConsumerKey       string `split_words:"true"`
 	TwitterConsumerSecret    string `split_words:"true"`
 }
@@ -49,7 +50,7 @@ func init() {
 
 	toggl = newToggl(conf)
 	pixela = newPixelaClient(conf)
-	if conf.TwitterAccessToken != "" {
+	if conf.TwitterEnabled != "" {
 		twitter = newTwitterClient(conf)
 	}
 
