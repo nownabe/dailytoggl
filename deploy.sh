@@ -7,7 +7,7 @@ set -o pipefail
 
 <<<$ENV_VARS_YAML cat > env-vars.yaml
 
-gcloud beta functions deploy dailytoggl \
+gcloud functions deploy ${FUNCTION_NAME} \
   --project ${PROJECT} \
   --quiet \
   --region ${REGION} \
