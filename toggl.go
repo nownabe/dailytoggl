@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const togglURL = "https://toggl.com/reports/api/v2/details"
+const togglURL = "https://api.track.toggl.com/reports/api/v2/details"
 
 // TogglClient defines toggl client's behaviors.
 type TogglClient interface {
