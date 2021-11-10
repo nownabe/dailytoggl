@@ -65,8 +65,6 @@ func (c *togglClient) getDayTotal(date time.Time) (int64, error) {
 		return 0, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
 
-	fmt.Printf("%s\n", rawBody)
-
 	body := togglDetailedResponse{}
 	if err := json.Unmarshal(rawBody, &body); err != nil {
 		return 0, fmt.Errorf("json.Unmarshal: %w", err)
