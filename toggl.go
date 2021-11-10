@@ -50,24 +50,26 @@ func (c *togglClient) getDayTotal(date time.Time) (int64, error) {
 	v.Set("until", date.Format("2006-01-02"))
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", togglURL, v.Encode()), nil)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("http.NewRequest: %w", err)
 	}
 	req.SetBasicAuth(c.token, "api_token")
 
 	resp, err := c.Do(req)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("togglClient.Do: %w", err)
 	}
 	defer resp.Body.Close()
 
 	rawBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
+
+	fmt.Printf("%s\n", rawBody)
 
 	body := togglDetailedResponse{}
 	if err := json.Unmarshal(rawBody, &body); err != nil {
-		return 0, err
+		return 0, fmt.Errorf("json.Unmarshal: %w", err)
 	}
 
 	return body.TotalGrand / 1000 / 60, nil
