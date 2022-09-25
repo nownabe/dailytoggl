@@ -1,6 +1,6 @@
 module github.com/nownabe/dailytoggl
 
-go 1.13
+go 1.19
 
 require (
 	github.com/ChimeraCoder/anaconda v2.0.0+incompatible
